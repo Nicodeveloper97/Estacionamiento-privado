@@ -9,7 +9,7 @@ export default function Dashboard() {
   const [userCars, setUserCars] = useState([]);
   const [parkingSpots, setParkingSpots] = useState(Array(60).fill(null));
   const [selectedCarForParking, setSelectedCarForParking] = useState('');
-  const [reservationMessage, setReservationMessage] = useState(''); // Nuevo estado para el mensaje
+  const [reservationMessage, setReservationMessage] = useState(''); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function Dashboard() {
         )
       );
 
-      // Aquí actualizamos el mensaje de confirmación
+      
       setReservationMessage(`Tu lugar fue reservado con éxito en el lugar ${spotIndex + 1}.`);
 
       setSelectedCarForParking('');
@@ -86,7 +86,7 @@ export default function Dashboard() {
     );
   }
 
-  const { first_name, last_name } = userData.user;
+  const { first_name, last_name, email } = userData.user;
   const { carbrand, carmodel } = userData;
 
   const carBrandsWithModels = carbrand.map((brand) => ({
@@ -96,19 +96,34 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center p-6">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg mb-8 p-6 border border-[#1B00B7]/10">
-        <h1 className="text-3xl font-bold text-[#1B00B7] mb-6">Dashboard del Usuario</h1>
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-          <input
-            id="name"
-            type="text"
-            value={`${first_name} ${last_name}`}
-            readOnly
-            className="w-full px-4 py-2 bg-gray-50 border border-[#1B00B7]/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50"
-          />
-        </div>
-      </div>
+  <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg mb-8 p-6 border border-[#1B00B7]/10">
+    <h1 className="text-3xl font-bold text-[#1B00B7] mb-6">Dashboard del Usuario</h1>
+    
+    {/* Sección para mostrar el nombre */}
+    <div className="mb-4">
+      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+      <input
+        id="name"
+        type="text"
+        value={`${first_name} ${last_name}`}
+        readOnly
+        className="w-full px-4 py-2 bg-gray-50 border border-[#1B00B7]/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50"
+      />
+    </div>
+
+    {/* Sección para mostrar el email */}
+    <div className="mb-4">
+      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico</label>
+      <input
+        id="email"
+        type="email"
+        value={email}
+        readOnly
+        className="w-full px-4 py-2 bg-gray-50 border border-[#1B00B7]/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50"
+      />
+    </div>
+  </div>
+
 
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg mb-8 p-6 border border-[#1B00B7]/10">
         <h2 className="text-2xl font-semibold text-[#1B00B7] mb-6">Vehículos Registrados</h2>
@@ -199,7 +214,7 @@ export default function Dashboard() {
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg mb-8 p-6 border border-[#1B00B7]/10">
         <h2 className="text-2xl font-semibold text-[#1B00B7] mb-6">Reservar Estacionamiento</h2>
         
-        {/* Mostramos el mensaje si hay uno */}
+        
         {reservationMessage && (
           <div className="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
             {reservationMessage}
@@ -249,5 +264,6 @@ export default function Dashboard() {
         </button>
       </div>
     </div>
+
   );
 }

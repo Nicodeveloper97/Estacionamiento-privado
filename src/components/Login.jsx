@@ -26,6 +26,8 @@ export default function Login() {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
+    setEmailError('');
+    setPasswordError('');
 
     if (!validateEmail(username)) {
       setEmailError('Por favor, ingresa un correo válido.');
@@ -41,7 +43,11 @@ export default function Login() {
       const data = await login(username, password);
       localStorage.setItem('userData', JSON.stringify(data));
       setSuccessMessage('¡Inicio de sesión exitoso!');
-      navigate('/dashboard');
+
+      // Mostrar mensaje de éxito por 3 segundos antes de redirigir
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 3000);  // Redirige después de 3 segundos
     } catch (error) {
       setError('Error en la autenticación. Por favor, verifica tus credenciales.');
     }
