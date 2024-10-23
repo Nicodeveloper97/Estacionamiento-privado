@@ -1,8 +1,28 @@
-# React + Vite
+# Estacionamiento Privado - Front-End
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este es el front-end del proyecto **Estacionamiento Privado**, una aplicación web desarrollada en **React** que permite a los usuarios gestionar el acceso y disponibilidad de un estacionamiento privado. El diseño es moderno y responsivo, utilizando **Tailwind CSS** para los estilos
 
-Currently, two official plugins are available:
+## Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Gestión de espacios de estacionamiento.
+- Visualización del estado (disponible/ocupado).
+- Estilos profesionales utilizando **Tailwind CSS**.
+
+
+### Instalacion
+
+git clone https://github.com/Nicodeveloper97/estacionamiento-privado-front-end.git
+
+cd estacionamiento-privado-front-end
+
+npm i
+
+npm run build
+
+npm run dev
+
+Tecnologías utilizadas
+React
+Tailwind CSS
+React Router
+Axios (para las peticiones HTTP)
