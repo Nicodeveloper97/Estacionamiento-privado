@@ -30,7 +30,7 @@ export default function Login() {
     setPasswordError('');
 
     if (!validateEmail(username)) {
-      setEmailError('Por favor, ingresa un correo válido.');
+      setEmailError('No encontramos una cuenta asociada con este correo');
       return;
     }
 
@@ -44,10 +44,9 @@ export default function Login() {
       localStorage.setItem('userData', JSON.stringify(data));
       setSuccessMessage('¡Inicio de sesión exitoso!');
 
-      // Mostrar mensaje de éxito por 3 segundos antes de redirigir
       setTimeout(() => {
         navigate('/dashboard');
-      }, 3000);  // Redirige después de 3 segundos
+      }, 1000);
     } catch (error) {
       setError('Error en la autenticación. Por favor, verifica tus credenciales.');
     }
@@ -70,7 +69,8 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
+      {/* Sección de imagen */}
       <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
         <img
           src={loginImage}
@@ -86,19 +86,17 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+      {/* Sección de formulario */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 md:p-8 min-h-screen">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h2 className="mt-6 text-3xl font-bold text-gray-900">
-              Bienvenido de vuelta
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Inicia sesión en tu cuenta para continuar
-            </p>
+            <h2 className="mt-6 text-3xl font-bold text-gray-900">Bienvenido de vuelta</h2>
+            <p className="mt-2 text-sm text-gray-600">Inicia sesión en tu cuenta para continuar</p>
           </div>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4 rounded-md shadow-sm">
+              {/* Campo de correo electrónico */}
               <div>
                 <label htmlFor="username" className="sr-only">
                   Correo electrónico
@@ -122,6 +120,8 @@ export default function Login() {
                 </div>
                 {emailError && <p className="mt-2 text-sm text-red-600">{emailError}</p>}
               </div>
+
+              {/* Campo de contraseña */}
               <div>
                 <label htmlFor="password" className="sr-only">
                   Contraseña
@@ -150,6 +150,7 @@ export default function Login() {
             {error && <p className="text-center text-sm text-red-600">{error}</p>}
             {successMessage && <p className="text-center text-sm text-green-600">{successMessage}</p>}
 
+            {/* Botón de envío */}
             <div>
               <button
                 type="submit"

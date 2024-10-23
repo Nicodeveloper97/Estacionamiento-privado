@@ -99,7 +99,7 @@ export default function Dashboard() {
   <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg mb-8 p-6 border border-[#1B00B7]/10">
     <h1 className="text-3xl font-bold text-[#1B00B7] mb-6">Dashboard del Usuario</h1>
     
-    {/* Sección para mostrar el nombre */}
+    
     <div className="mb-4">
       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
       <input
@@ -111,7 +111,7 @@ export default function Dashboard() {
       />
     </div>
 
-    {/* Sección para mostrar el email */}
+    
     <div className="mb-4">
       <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico</label>
       <input
