@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const [userData, setUserData] = useState(null);
@@ -7,9 +7,19 @@ export default function Dashboard() {
   const [selectedModel, setSelectedModel] = useState('');
   const [newLicensePlate, setNewLicensePlate] = useState('');
   const [userCars, setUserCars] = useState([]);
-  const [parkingSpots, setParkingSpots] = useState(Array(60).fill(null));
+  const [parkingSpots, setParkingSpots] = useState(() => {
+    const spots = Array(20).fill(null);
+    spots[11] = '1'; 
+    return spots
+  });
   const [selectedCarForParking, setSelectedCarForParking] = useState('');
   const [reservationMessage, setReservationMessage] = useState(''); 
+  const [guestName, setGuestName] = useState("");
+  const [guestSurname, setGuestSurname] = useState("");
+  const [guestEntryDate, setGuestEntryDate] = useState("");
+  const [guestEntryTime, setGuestEntryTime] = useState("");
+  const [guestParkingSpot, setGuestParkingSpot] = useState("");
+  const [guestReservations, setGuestReservations] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,7 +32,7 @@ export default function Dashboard() {
           brand: 'Fiat',
           model: 'Cronos',
           licensePlate: 'ABC123',
-          parkingSpot: null
+          parkingSpot: 12
         }
       ]);
     } else {
@@ -69,10 +79,38 @@ export default function Dashboard() {
         )
       );
 
-      
       setReservationMessage(`Tu lugar fue reservado con éxito en el lugar ${spotIndex + 1}.`);
 
       setSelectedCarForParking('');
+    }
+  };
+
+  const handleReserveGuestParking = () => {
+    if (guestName && guestSurname && guestEntryDate && guestEntryTime && guestParkingSpot) {
+      const newGuest = {
+        id: Date.now().toString(),
+        name: guestName,
+        surname: guestSurname,
+        entryDate: guestEntryDate,
+        entryTime: guestEntryTime,
+        parkingSpot: guestParkingSpot,
+      };
+
+      setGuestReservations((prevReservations) => [...prevReservations, newGuest]);
+
+      setParkingSpots((prevSpots) => {
+        const newSpots = [...prevSpots];
+        newSpots[parseInt(guestParkingSpot) - 1] = `${guestName} ${guestSurname}`;
+        return newSpots;
+      });
+
+      setReservationMessage(`Reserva realizada para ${guestName} ${guestSurname} en el lugar ${guestParkingSpot}.`);
+
+      setGuestName("");
+      setGuestSurname("");
+      setGuestEntryDate("");
+      setGuestEntryTime("");
+      setGuestParkingSpot("");
     }
   };
 
@@ -94,176 +132,193 @@ export default function Dashboard() {
     models: carmodel.filter((model) => model.brand_code === brand.code),
   }));
 
+  const availableSpots = parkingSpots.map((spot, index) => spot === null ? index + 1 : null).filter(Boolean);
+
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center p-6">
-  <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg mb-8 p-6 border border-[#1B00B7]/10">
-    <h1 className="text-3xl font-bold text-[#1B00B7] mb-6">Dashboard del Usuario</h1>
-    
-    
-    <div className="mb-4">
-      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-      <input
-        id="name"
-        type="text"
-        value={`${first_name} ${last_name}`}
-        readOnly
-        className="w-full px-4 py-2 bg-gray-50 border border-[#1B00B7]/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50"
-      />
-    </div>
-
-    
-    <div className="mb-4">
-      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico</label>
-      <input
-        id="email"
-        type="email"
-        value={email}
-        readOnly
-        className="w-full px-4 py-2 bg-gray-50 border border-[#1B00B7]/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50"
-      />
-    </div>
-  </div>
-
-
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg mb-8 p-6 border border-[#1B00B7]/10">
-        <h2 className="text-2xl font-semibold text-[#1B00B7] mb-6">Vehículos Registrados</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-[#1B00B7]/10">
-            <thead className="bg-[#1B00B7]/5">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#1B00B7] uppercase tracking-wider">Marca</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#1B00B7] uppercase tracking-wider">Modelo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#1B00B7] uppercase tracking-wider">Patente</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#1B00B7] uppercase tracking-wider">Estacionamiento</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-[#1B00B7]/10">
-              {userCars.map((car) => (
-                <tr key={car.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{car.brand}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{car.model}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{car.licensePlate}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{car.parkingSpot || 'No asignado'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg mb-8 p-6 border border-[#1B00B7]/10">
-        <h2 className="text-2xl font-semibold text-[#1B00B7] mb-6">Agregar un Nuevo Vehículo</h2>
-        <div className="grid gap-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="flex flex-col lg:flex-row justify-between gap-6 p-4 lg:p-6">
+      
+      <div className="w-full lg:w-2/3 space-y-6 order-2 lg:order-1">
+        
+        <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md border border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Agregar un vehículo</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+              <label htmlFor="carBrand" className="block text-sm font-medium text-gray-700">Marca</label>
               <select
-                id="brand"
+                id="carBrand"
                 value={selectedBrand}
-                onChange={(e) => setSelectedBrand(e.target.value)}
-                className="w-full px-4 py-2 bg-white border border-[#1B00B7]/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50"
+                onChange={(e) => {
+                  setSelectedBrand(e.target.value);
+                  setSelectedModel('');
+                }}
+                className="w-full mt-1 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Seleccione una marca</option>
+                <option value="">Selecciona una marca</option>
                 {carBrandsWithModels.map((brand) => (
-                  <option key={brand.code} value={brand.name}>
-                    {brand.name}
-                  </option>
+                  <option key={brand.code} value={brand.code}>{brand.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-2">Modelo</label>
+              <label htmlFor="carModel" className="block text-sm font-medium text-gray-700">Modelo</label>
               <select
-                id="model"
+                id="carModel"
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
-                className="w-full px-4 py-2 bg-white border border-[#1B00B7]/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50"
+                className="w-full mt-1 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={!selectedBrand}
               >
-                <option value="">Seleccione un modelo</option>
-                {carBrandsWithModels
-                  .find((brand) => brand.name === selectedBrand)
-                  ?.models.map((model) => (
-                    <option key={model.id} value={model.name}>
-                      {model.name}
-                    </option>
-                  ))}
+                <option value="">Selecciona un modelo</option>
+                {selectedBrand && carBrandsWithModels.find(brand => brand.code === selectedBrand)?.models.map((model) => (
+                  <option key={model.code} value={model.code}>{model.name}</option>
+                ))}
               </select>
             </div>
-          </div>
-          <div>
-            <label htmlFor="licensePlate" className="block text-sm font-medium text-gray-700 mb-2">Patente</label>
-            <input
-              type="text"
-              id="licensePlate"
-              value={newLicensePlate}
-              onChange={(e) => setNewLicensePlate(e.target.value)}
-              className="w-full px-4 py-2 bg-white border border-[#1B00B7]/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50"
-              placeholder="Ingrese la patente"
-            />
+            <div className="sm:col-span-2">
+              <label htmlFor="carLicensePlate" className="block text-sm font-medium text-gray-700">Patente</label>
+              <input
+                id="carLicensePlate"
+                type="text"
+                value={newLicensePlate}
+                onChange={(e) => setNewLicensePlate(e.target.value)}
+                className="w-full mt-1 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
           </div>
           <button
             onClick={handleAddCar}
-            disabled={!selectedBrand || !selectedModel || !newLicensePlate}
-            className="w-full bg-[#1B00B7] hover:bg-[#1B00B7]/90 text-white font-bold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-4 w-full px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Agregar Vehículo
+            Agregar vehículo
+          </button>
+        </div>
+        
+        <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md border border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Reservar estacionamiento para invitados</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="guestName" className="block text-sm font-medium text-gray-700">Nombre</label>
+              <input
+                id="guestName"
+                type="text"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                className="w-full mt-1 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="guestSurname" className="block text-sm font-medium text-gray-700">Apellido</label>
+              <input
+                id="guestSurname"
+                type="text"
+                value={guestSurname}
+                onChange={(e) => setGuestSurname(e.target.value)}
+                className="w-full mt-1 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="guestEntryDate" className="block text-sm font-medium text-gray-700">Fecha de ingreso</label>
+              <input
+                id="guestEntryDate"
+                type="date"
+                value={guestEntryDate}
+                onChange={(e) => setGuestEntryDate(e.target.value)}
+                className="w-full mt-1 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="guestEntryTime" className="block text-sm font-medium text-gray-700">Hora de ingreso</label>
+              <input
+                id="guestEntryTime"
+                type="time"
+                value={guestEntryTime}
+                onChange={(e) => setGuestEntryTime(e.target.value)}
+                className="w-full mt-1 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="guestParkingSpot" className="block text-sm font-medium text-gray-700">Lugar de estacionamiento</label>
+              <select
+                id="guestParkingSpot"
+                value={guestParkingSpot}
+                onChange={(e) => setGuestParkingSpot(e.target.value)}
+                className="w-full mt-1 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Selecciona un lugar</option>
+                {availableSpots.map((spot) => (
+                  <option key={spot} value={spot}>{spot}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <button
+            onClick={handleReserveGuestParking}
+            className="mt-4 w-full px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Reservar estacionamiento para invitado
           </button>
         </div>
       </div>
 
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg mb-8 p-6 border border-[#1B00B7]/10">
-        <h2 className="text-2xl font-semibold text-[#1B00B7] mb-6">Reservar Estacionamiento</h2>
-        
-        
-        {reservationMessage && (
-          <div className="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
-            {reservationMessage}
-          </div>
-        )}
-
-        <div className="mb-6">
-          <label htmlFor="carForParking" className="block text-sm font-medium text-gray-700 mb-2">Seleccione un vehículo</label>
-          <select
-            id="carForParking"
-            value={selectedCarForParking}
-            onChange={(e) => setSelectedCarForParking(e.target.value)}
-            className="w-full px-4 py-2 bg-white border border-[#1B00B7]/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50"
+      
+      <div className="w-full lg:w-1/3 space-y-6 order-1 lg:order-2">
+        <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md border border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Información del usuario</h2>
+          <p className="text-sm text-gray-700"><strong>Nombre:</strong> {first_name}</p>
+          <p className="text-sm text-gray-700"><strong>Apellido:</strong> {last_name}</p>
+          <p className="text-sm text-gray-700"><strong>Email:</strong> {email}</p>
+          <button
+            onClick={handleLogout}
+            className="mt-4 w-full px-6 py-2 bg-white text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Seleccione un vehículo</option>
-            {userCars.filter(car => car.parkingSpot === null).map((car) => (
-              <option key={car.id} value={car.id}>
-                {car.brand} {car.model} - {car.licensePlate}
-              </option>
-            ))}
-          </select>
+            Cerrar sesión
+          </button>
         </div>
-        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
-          {parkingSpots.map((carId, index) => (
-            <button
-              key={index}
-              className={`w-full h-12 rounded-md font-semibold transition-colors ${
-                carId
-                  ? 'bg-red-500 text-white cursor-not-allowed'
-                  : 'bg-[#1B00B7]/10 text-[#1B00B7] hover:bg-[#1B00B7]/20'
-              }`}
-              onClick={() => handleReserveParking(index)}
-              disabled={carId || !selectedCarForParking}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      </div>
 
-      <div className="w-full max-w-4xl flex justify-center">
-        <button
-          onClick={handleLogout}
-          className="bg-white border-2 border-[#1B00B7] text-[#1B00B7] hover:bg-[#1B00B7] hover:text-white font-bold py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B00B7]/50 focus:ring-offset-2 transition-colors"
-        >
-          Cerrar sesión
-        </button>
+        <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md border border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Tus vehículos</h2>
+          {userCars.length === 0 ? (
+            <p>No has agregado vehículos aún.</p>
+          ) : (
+            <ul className="space-y-2">
+              {userCars.map((car) => (
+                <li
+                  key={car.id}
+                  className="p-3 bg-white rounded-md shadow-sm"
+                >
+                  <strong>{car.brand} {car.model}</strong> - {car.licensePlate}
+                  <br />
+                  Lugar de estacionamiento: {car.parkingSpot || "Ninguno"}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        
+        <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md border border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Mis invitados</h2>
+          {guestReservations.length === 0 ? (
+            
+            <p>No tienes reservas de invitados aún.</p>
+          ) : (
+            <ul className="space-y-2">
+              {guestReservations.map((guest) => (
+                <li
+                  key={guest.id}
+                  className="p-3 bg-gray-100 rounded-md shadow-sm border border-gray-200"
+                >
+                  <strong>{guest.name} {guest.surname}</strong>
+                  <br />
+                  Fecha y hora de ingreso: {guest.entryDate} {guest.entryTime}
+                  <br />
+                  Lugar de estacionamiento: {guest.parkingSpot}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
-
   );
 }

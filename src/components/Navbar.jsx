@@ -9,9 +9,9 @@ function Navbar() {
         <div className="flex justify-between items-center h-16">
           
           <div className="flex-shrink-0"> 
-            <Link to="/">
+            
               <img src={logo} alt="Logo ParkSmart" className="h-10 w-auto" />
-            </Link>
+            
           </div>
 
         </div>
